@@ -51,7 +51,7 @@ const Navbar = () => {
           })}
 
           <div className="flex gap-7.5 items-center">
-            <ModeToggle />
+            {/* <ModeToggle /> */}
             <SignedOut>
               <SignInButton mode="modal" />
             </SignedOut>
