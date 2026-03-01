@@ -5,6 +5,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/layout/Navbar";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
+import { ThemeProvider } from "@/components/themes/theme-provider";
 
 const ibmPlexSerif = IBM_Plex_Serif({
   variable: "--font-ibm-plex-serif",
@@ -23,6 +24,9 @@ export const metadata: Metadata = {
   title: "Bookified",
   description:
     "Transform your books into interactive AI conversations. Upload PDFs, and chat with your books using voice.",
+  icons: {
+    icon: "/assets/logo.png",
+  },
 };
 
 export default function RootLayout({
@@ -32,12 +36,19 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider>
-      <html lang="en">
+      <html lang="en" suppressHydrationWarning>
         <body
           className={`${ibmPlexSerif.variable} ${monaSans.variable} relative font-sans antialiased`}
         >
           <Navbar />
-          {children}
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
           <Toaster />
         </body>
       </html>
