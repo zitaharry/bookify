@@ -3,6 +3,8 @@ import BookCard from "@/components/homepage/BookCard";
 import HeroSection from "@/components/homepage/HeroSection";
 import Search from "@/components/homepage/Search";
 
+export const dynamic = "force-dynamic";
+
 const Page = async ({
   searchParams,
 }: {
