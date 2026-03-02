@@ -1,14 +1,18 @@
+import { getAllBooks } from "@/lib/actions/book.actions";
 import BookCard from "@/components/homepage/BookCard";
 import HeroSection from "@/components/homepage/HeroSection";
 import Search from "@/components/homepage/Search";
-import { sampleBooks } from "@/lib/constants";
-import React from "react";
 
-const Home = async ({
+const Page = async ({
   searchParams,
 }: {
   searchParams: Promise<{ query?: string }>;
 }) => {
+  const { query } = await searchParams;
+
+  const bookResults = await getAllBooks(query);
+  const books = bookResults.success ? (bookResults.data ?? []) : [];
+
   return (
     <main className="wrapper container">
       <HeroSection />
@@ -21,7 +25,7 @@ const Home = async ({
       </div>
 
       <div className="library-books-grid">
-        {sampleBooks.map((book) => (
+        {books.map((book) => (
           <BookCard
             key={book._id}
             title={book.title}
@@ -35,4 +39,4 @@ const Home = async ({
   );
 };
 
-export default Home;
+export default Page;
