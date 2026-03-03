@@ -191,7 +191,7 @@ export function useVapi(book: IBook) {
         }
       },
 
-      error: (error: Error) => {
+      error: (error: any) => {
         console.error("Vapi error:", error);
         // Don't reset isStoppingRef here - delayed events may still fire
         setStatus("idle");
@@ -214,7 +214,28 @@ export function useVapi(book: IBook) {
         }
 
         // Show user-friendly error message
-        const errorMessage = error.message?.toLowerCase() || "";
+        let errorMessage = "";
+        if (typeof error === "string") {
+          errorMessage = error.toLowerCase();
+        } else if (error instanceof Error) {
+          errorMessage = error.message?.toLowerCase() || "";
+        } else if (error && typeof error === "object") {
+          // Handle Vapi specific error objects (like daily-error)
+          if (error.type === "daily-error") {
+            const dailyError = error.error;
+            if (
+              dailyError?.msg?.toLowerCase().includes("mic") ||
+              dailyError?.msg?.toLowerCase().includes("permission")
+            ) {
+              errorMessage = "microphone";
+            } else {
+              errorMessage = dailyError?.msg?.toLowerCase() || "daily-error";
+            }
+          } else {
+            errorMessage = JSON.stringify(error).toLowerCase();
+          }
+        }
+
         if (
           errorMessage.includes("timeout") ||
           errorMessage.includes("silence")
@@ -228,6 +249,15 @@ export function useVapi(book: IBook) {
         ) {
           setLimitError(
             "Connection lost. Please check your internet and try again.",
+          );
+        } else if (
+          errorMessage.includes("microphone") ||
+          errorMessage.includes("permission") ||
+          errorMessage.includes("notallowederror") ||
+          errorMessage.includes("mic")
+        ) {
+          setLimitError(
+            "Microphone access denied. Please enable microphone permissions in your browser.",
           );
         } else {
           setLimitError(
