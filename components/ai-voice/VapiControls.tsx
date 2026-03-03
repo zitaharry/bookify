@@ -30,10 +30,9 @@ const VapiControls = ({ book }: { book: IBook }) => {
   useEffect(() => {
     if (limitError) {
       toast.error(limitError);
+      // Soften redirect logic - don't immediately bounce if not billing error
       if (isBillingError) {
         router.push("/subscriptions");
-      } else {
-        router.push("/");
       }
       clearError();
     }
